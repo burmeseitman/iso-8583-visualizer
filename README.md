@@ -1,5 +1,11 @@
 # ISO-8583 Interactive Visualizer 🛡️
 
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+
 A professional **ISO-8583 Protocol Debugger** and Simulator. Designed for FinTech engineers to visualize, validate, and decompose financial messages in real-time.
 
 ![Interface Preview](./assets/payload_result.png)
@@ -61,6 +67,9 @@ npm run dev
 | 41 | Terminal ID | ans8 | Unique terminal identifier |
 | 43 | Merchant Name | ans..40 (LLVAR) | Name, City, Country of merchant |
 | 49 | Currency Code | n3 | ISO 4217 Currency (e.g., 840=USD) |
+
+## ⚖️ License
+This project is licensed under the **MIT License**. See the `LICENSE` file for details.
 
 ---
 **Building software at the speed of thought.** ⚡
