@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pyiso8583
+pydantic
+pydantic-settings
+python-dotenv
+cors
+fastapi-cors
