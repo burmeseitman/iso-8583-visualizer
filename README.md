@@ -32,16 +32,35 @@ A professional **ISO-8583 Protocol Debugger** and Simulator. Designed for FinTec
 
 ## 📦 Getting Started
 
-### 1. Backend Setup
+### 🐳 Running with Docker (Recommended)
+
+The easiest way to run the entire application stack is using Docker Compose. This starts the FastAPI backend and the Vite React frontend (served via Nginx) in a unified container network.
+
+1. **Build and start the services**:
+   ```bash
+   docker compose up --build
+   ```
+
+2. **Access the application**:
+   - Web UI: [http://localhost:8080](http://localhost:8080)
+   - Backend API: [http://localhost:8001](http://localhost:8001)
+
+*Nginx reverse-proxies frontend requests at `/api/*` to the FastAPI backend container internally, avoiding CORS issues.*
+
+### 🛠️ Local Development (Manual Setup)
+
+If you prefer to run the services manually without Docker:
+
+#### 1. Backend Setup
 ```bash
 cd backend
 python -m venv venv
-./venv/Scripts/activate # Windows
+source venv/bin/activate  # On macOS/Linux (or venv\Scripts\activate on Windows)
 pip install -r requirements.txt
 python main.py
 ```
 
-### 2. Frontend Setup
+#### 2. Frontend Setup
 ```bash
 cd frontend
 npm install
