@@ -8,7 +8,7 @@ import {
   Info, Clock, ArrowRight, BadgeCheck, XCircle
 } from 'lucide-react';
 
-const API_URL = 'http://localhost:8001';
+const API_URL = import.meta.env.VITE_API_URL !== undefined ? import.meta.env.VITE_API_URL : 'http://localhost:8001';
 
 /* ── Utility ─────────────────────────────── */
 function formatPAN(pan) {
