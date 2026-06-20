@@ -34,18 +34,39 @@ A professional **ISO-8583 Protocol Debugger** and Simulator. Designed for FinTec
 
 ### 🐳 Running with Docker (Recommended)
 
-The easiest way to run the entire application stack is using Docker Compose. This starts the FastAPI backend and the Vite React frontend (served via Nginx) in a unified container network.
+The easiest way to run the entire application stack is using Docker Compose.
 
-1. **Build and start the services**:
+#### A. HTTP Configuration (Local Development)
+By default, the docker configuration runs on HTTP:
+1. **Start the services**:
    ```bash
    docker compose up --build
    ```
-
 2. **Access the application**:
    - Web UI: [http://localhost:8080](http://localhost:8080)
    - Backend API: [http://localhost:8001](http://localhost:8001)
 
-*Nginx reverse-proxies frontend requests at `/api/*` to the FastAPI backend container internally, avoiding CORS issues.*
+#### B. HTTPS Configuration (Production VPS)
+To deploy the application securely with HTTPS (SSL/TLS):
+1. **Ensure your domain points to your VPS IP**:
+   Point your domain name (e.g. `yourdomain.com`) to your VPS.
+2. **Obtain SSL Certificates** (using Certbot on the host VPS):
+   ```bash
+   sudo apt-get update && sudo apt-get install -y certbot
+   sudo certbot certonly --standalone -d yourdomain.com
+   ```
+   This generates certificates in `/etc/letsencrypt/live/yourdomain.com/`.
+3. **Configure Domain Name**:
+   - Open [frontend/nginx.ssl.conf](file:///Users/minhtet/Projects/iso-8583-visualizer/frontend/nginx.ssl.conf) and replace `yourdomain.com` with your actual domain in all marked places.
+4. **Start the services in production mode**:
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.ssl.yml up --build -d
+   ```
+5. **Access the application**:
+   - Web UI: `https://yourdomain.com`
+   - Backend API: `https://yourdomain.com/api`
+
+*Nginx reverse-proxies `/api/*` requests to the FastAPI backend container internally (avoiding CORS issues) and redirects all HTTP traffic to HTTPS.*
 
 ### 🛠️ Local Development (Manual Setup)
 
