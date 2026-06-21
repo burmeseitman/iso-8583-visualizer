@@ -52,18 +52,18 @@ The easiest way to deploy the application is using Docker Compose. Both the fron
 For VPS deployments hosting multiple apps, configure a centralized Nginx instance directly on the host VPS. This host Nginx handles Let's Encrypt SSL certificates (on port `443`) and reverse-proxies domain/subdomain requests to your Docker containers.
 
 1. **Configure Host Nginx**:
-   - Copy the template from [nginx-host.conf](file:///Users/minhtet/Projects/iso-8583-visualizer/nginx-host.conf) into `/etc/nginx/sites-available/burmesestack` on your VPS.
-   - Replace all instances of `subdomain.burmesestack.com` with your actual domain/subdomain.
+   - Copy the template from [nginx-host.conf](file:///Users/minhtet/Projects/iso-8583-visualizer/nginx-host.conf) into `/etc/nginx/sites-available/your-app` on your VPS.
+   - Replace all instances of `subdomain.yourdomain.com` with your actual domain/subdomain.
    - Create a symlink to enable it:
      ```bash
-     sudo ln -s /etc/nginx/sites-available/burmesestack /etc/nginx/sites-enabled/
+     sudo ln -s /etc/nginx/sites-available/your-app /etc/nginx/sites-enabled/
      ```
 
 2. **Acquire Let's Encrypt SSL Certificates**:
    Run Certbot on the host VPS:
    ```bash
    sudo apt update && sudo apt install -y certbot python3-certbot-nginx
-   sudo certbot --nginx -d subdomain.burmesestack.com
+   sudo certbot --nginx -d subdomain.yourdomain.com
    ```
 
 3. **Restart Host Nginx**:
@@ -71,7 +71,7 @@ For VPS deployments hosting multiple apps, configure a centralized Nginx instanc
    sudo nginx -t && sudo systemctl restart nginx
    ```
 
-*Now you can access the secure app at `https://subdomain.burmesestack.com`. Incoming traffic to `/api/*` is automatically forwarded to the backend container (port `8001`) with CORS handled cleanly.*
+*Now you can access the secure app at `https://subdomain.yourdomain.com`. Incoming traffic to `/api/*` is automatically forwarded to the backend container (port `8001`) with CORS handled cleanly.*
 
 ### 🛠️ Local Development (Manual Setup)
 
