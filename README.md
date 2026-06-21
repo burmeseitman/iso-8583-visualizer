@@ -34,39 +34,44 @@ A professional **ISO-8583 Protocol Debugger** and Simulator. Designed for FinTec
 
 ### 🐳 Running with Docker (Recommended)
 
-The easiest way to run the entire application stack is using Docker Compose.
+The easiest way to deploy the application is using Docker Compose. Both the frontend and backend are run as lightweight HTTP containers exposing ports `8080` (frontend) and `8001` (backend) to the host.
 
-#### A. HTTP Configuration (Local Development)
-By default, the docker configuration runs on HTTP:
-1. **Start the services**:
+1. **Start the containers**:
    ```bash
-   docker compose up --build
+   docker compose up --build -d
    ```
-2. **Access the application**:
+
+2. **Access the application directly (HTTP)**:
    - Web UI: [http://localhost:8080](http://localhost:8080)
    - Backend API: [http://localhost:8001](http://localhost:8001)
 
-#### B. HTTPS Configuration (Production VPS)
-To deploy the application securely with HTTPS (SSL/TLS):
-1. **Ensure your domain points to your VPS IP**:
-   Point your domain name (e.g. `yourdomain.com`) to your VPS.
-2. **Obtain SSL Certificates** (using Certbot on the host VPS):
-   ```bash
-   sudo apt-get update && sudo apt-get install -y certbot
-   sudo certbot certonly --standalone -d yourdomain.com
-   ```
-   This generates certificates in `/etc/letsencrypt/live/yourdomain.com/`.
-3. **Configure Domain Name**:
-   - Open [frontend/nginx.ssl.conf](file:///Users/minhtet/Projects/iso-8583-visualizer/frontend/nginx.ssl.conf) and replace `yourdomain.com` with your actual domain in all marked places.
-4. **Start the services in production mode**:
-   ```bash
-   docker compose -f docker-compose.yml -f docker-compose.ssl.yml up --build -d
-   ```
-5. **Access the application**:
-   - Web UI: `https://yourdomain.com`
-   - Backend API: `https://yourdomain.com/api`
+---
 
-*Nginx reverse-proxies `/api/*` requests to the FastAPI backend container internally (avoiding CORS issues) and redirects all HTTP traffic to HTTPS.*
+### 🌐 Centralized Production Reverse Proxy (HTTPS)
+
+For VPS deployments hosting multiple apps, configure a centralized Nginx instance directly on the host VPS. This host Nginx handles Let's Encrypt SSL certificates (on port `443`) and reverse-proxies domain/subdomain requests to your Docker containers.
+
+1. **Configure Host Nginx**:
+   - Copy the template from [nginx-host.conf](file:///Users/minhtet/Projects/iso-8583-visualizer/nginx-host.conf) into `/etc/nginx/sites-available/burmesestack` on your VPS.
+   - Replace all instances of `subdomain.burmesestack.com` with your actual domain/subdomain.
+   - Create a symlink to enable it:
+     ```bash
+     sudo ln -s /etc/nginx/sites-available/burmesestack /etc/nginx/sites-enabled/
+     ```
+
+2. **Acquire Let's Encrypt SSL Certificates**:
+   Run Certbot on the host VPS:
+   ```bash
+   sudo apt update && sudo apt install -y certbot python3-certbot-nginx
+   sudo certbot --nginx -d subdomain.burmesestack.com
+   ```
+
+3. **Restart Host Nginx**:
+   ```bash
+   sudo nginx -t && sudo systemctl restart nginx
+   ```
+
+*Now you can access the secure app at `https://subdomain.burmesestack.com`. Incoming traffic to `/api/*` is automatically forwarded to the backend container (port `8001`) with CORS handled cleanly.*
 
 ### 🛠️ Local Development (Manual Setup)
 
