@@ -235,42 +235,78 @@ async def generate_iso(request: TransactionRequest):
         return {"status": "ERROR", "reason": f"Encoding failed: {str(e)}"}
     
     # ── Build detailed field breakdown for the UI ──
+    # We walk the encoded dict in stream order to track byte offsets so each
+    # field can be located inside hex_msg.  Every encoded entry is
+    #   {'len': <length-prefix bytes>, 'data': <field data bytes>}
     breakdown = []
-    
-    # MTI (key 't' in pyiso8583)
-    breakdown.append({
-        "id": "0",
-        "name": FIELD_INFO['0']['name'],
-        "value": msg_data['t'],
-        "desc": FIELD_INFO['0']['desc']
-    })
-    
-    # Bitmap
-    bitmap_hex = hex_msg[8:24] if len(hex_msg) >= 24 else hex_msg[4:20]
-    breakdown.append({
-        "id": "1",
-        "name": FIELD_INFO['1']['name'],
-        "value": bitmap_hex,
-        "desc": FIELD_INFO['1']['desc']
-    })
+    byte_offset = 0  # running position in raw_msg (bytes)
 
-    # All other data elements in order
+    # ── MTI ──
+    mti_raw = encoded['t']['len'] + encoded['t']['data']
+    breakdown.append({
+        "id":         "0",
+        "name":       FIELD_INFO['0']['name'],
+        "value":      msg_data['t'],
+        "hex_bytes":  binascii.hexlify(mti_raw).upper().decode(),
+        "hex_start":  byte_offset * 2,
+        "hex_end":    (byte_offset + len(mti_raw)) * 2,
+        "desc":       FIELD_INFO['0']['desc']
+    })
+    byte_offset += len(mti_raw)
+
+    # ── Primary Bitmap ──
+    p_raw = encoded['p']['len'] + encoded['p']['data']
+    primary_bitmap = encoded['p']['data'].decode()           # e.g. "723C46C108E08000"
+    s_raw = b''
+    secondary_bitmap = ''
+    if encoded.get('1') and encoded['1']:
+        s_raw = encoded['1']['len'] + encoded['1']['data']
+        secondary_bitmap = encoded['1']['data'].decode()
+    full_bitmap_hex = primary_bitmap + secondary_bitmap
+    bitmap_raw = p_raw + s_raw
+    breakdown.append({
+        "id":         "1",
+        "name":       FIELD_INFO['1']['name'],
+        "value":      full_bitmap_hex,
+        "hex_bytes":  binascii.hexlify(bitmap_raw).upper().decode(),
+        "hex_start":  byte_offset * 2,
+        "hex_end":    (byte_offset + len(bitmap_raw)) * 2,
+        "desc":       FIELD_INFO['1']['desc']
+    })
+    byte_offset += len(bitmap_raw)
+
+    # ── Data Elements (in numeric order) ──
     for f_id in sorted([k for k in msg_data.keys() if k not in ('t', 'h', 'p')], key=int):
-        info = FIELD_INFO.get(f_id, {'name': f'Field {f_id}', 'desc': f'Data element {f_id}.'})
+        info      = FIELD_INFO.get(f_id, {'name': f'Field {f_id}', 'desc': f'Data element {f_id}.'})
+        raw_value = msg_data[f_id]
+        f_raw     = encoded[f_id]['len'] + encoded[f_id]['data']
+
+        # For DE4 (Amount) annotate with dollar value so cents vs dollars is obvious
+        if f_id == '4':
+            dollar_amount = int(raw_value) / 100
+            display_value = f"{raw_value}  (= ${dollar_amount:.2f} USD)"
+        else:
+            display_value = raw_value
+
         breakdown.append({
-            "id": f_id,
-            "name": info['name'],
-            "value": msg_data[f_id],
-            "desc": info['desc']
+            "id":         f_id,
+            "name":       info['name'],
+            "value":      display_value,
+            "hex_bytes":  binascii.hexlify(f_raw).upper().decode(),
+            "hex_start":  byte_offset * 2,
+            "hex_end":    (byte_offset + len(f_raw)) * 2,
+            "desc":       info['desc']
         })
+        byte_offset += len(f_raw)
 
     return {
-        "status": "SUCCESS",
-        "hex": hex_msg,
-        "binary_preview": " ".join([bin(int(c, 16))[2:].zfill(4) for c in hex_msg[:32]]) + "...",
-        "fields": breakdown,
-        "card_used": card["type"],
-        "amount_processed": request.amount
+        "status":           "SUCCESS",
+        "hex":              hex_msg,
+        "binary_preview":   " ".join([bin(int(c, 16))[2:].zfill(4) for c in hex_msg[:40]]) + "...",
+        "fields":           breakdown,
+        "card_used":        card["type"],
+        "amount_processed": request.amount,
+        "encoding_note":    "All fields use ASCII encoding: each character maps to its ASCII byte (e.g. '0'→0x30, '4'→0x34). Use hex_bytes per field to locate it in the raw stream."
     }
 
 if __name__ == "__main__":

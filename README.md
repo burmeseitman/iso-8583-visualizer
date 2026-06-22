@@ -8,17 +8,27 @@
 
 A professional **ISO-8583 Protocol Debugger** and Simulator. Designed for FinTech engineers to visualize, validate, and decompose financial messages in real-time.
 
-![Interface Preview](./assets/payload_result.png)
+## 📸 Screenshots
+
+| Initial State | Transaction Generated |
+|:---:|:---:|
+| ![Initial State](./assets/screenshot_initial.png) | ![Transaction Result](./assets/screenshot_transaction.png) |
+
+| PAN Field Highlighted in Hex Stream | Amount Field Highlighted in Hex Stream |
+|:---:|:---:|
+| ![PAN Hex Highlight](./assets/screenshot_hex_highlight.png) | ![Amount Hex Highlight](./assets/screenshot_amount_highlight.png) |
 
 ## 🚀 Features
-- **✨ Dynamic User Interface**: Modern, glassmorphism-based design with smooth `Framer Motion` animations.
+- **✨ Dynamic User Interface**: Modern design with smooth `Framer Motion` animations and a colour-coded hex stream.
 - **💳 Instrument Simulation**: Toggle between realistic **Credit Card** (limit-enforced) and **Debit Card** (savings-enforced) behaviors.
 - **⚡ Real-time Packet Generation**: Instantly encode `0100` Authorization Requests using the `pyiso8583` standard library.
+- **🔬 Interactive Hex Stream**: Every field in the raw hex output is colour-coded. Hover or click a field in the Explanation panel to **highlight its exact bytes** in the stream — instantly showing how ASCII encoding maps characters to hex bytes.
+- **📍 Per-field Byte Offsets**: Each Data Element card shows its `hex_bytes` and byte position (`bytes N–M`) within the raw stream, solving the ASCII ↔ hex confusion.
 - **🔍 Deep Analysis (Triple-Panel)**:
-  - **Left**: Card Simulator & Transaction Control with an educational "About ISO 8583" guide.
-  - **Center**: Live Packet Capture terminal showing Raw Hex Streams and Binary Bitmaps.
-  - **Right**: Field-by-field breakdown with encyclopedic descriptions, mapping DE formats (LLVAR, n, ans).
-- **🎓 Educational Focus**: Built-in guide explaining Message Type Indicators (MTI), Bitmaps, and Data Elements (DE).
+  - **Left**: Card Simulator & Transaction Control with a built-in ISO 8583 quick-reference guide.
+  - **Center**: Live Packet Capture terminal with a **colour-segmented hex stream**, field legend badges, and a Binary Bitmap preview.
+  - **Right**: Field-by-field breakdown showing decoded value, raw hex bytes in stream, byte offset, and encyclopedic descriptions.
+- **🎓 Educational Focus**: Built-in ASCII encoding note explaining why `'0100'` appears as `30 31 30 30` in the stream.
 
 ## 🌐 The 3-Panel Visualization Flow
 1. **Interactive Inputs**: Simulated card environment with real-time balance/usage indicators.
