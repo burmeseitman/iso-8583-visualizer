@@ -10,6 +10,10 @@ A professional **ISO-8583 Protocol Debugger** and Simulator. Designed for FinTec
 
 ## 📸 Screenshots
 
+| Main UI | Payload Result |
+|:---:|:---:|
+| ![Main UI](./assets/main_ui.png) | ![Payload Result](./assets/payload_result.png) |
+
 | Initial State | Transaction Generated |
 |:---:|:---:|
 | ![Initial State](./assets/screenshot_initial.png) | ![Transaction Result](./assets/screenshot_transaction.png) |
