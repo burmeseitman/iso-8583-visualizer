@@ -14,13 +14,6 @@ A professional **ISO-8583 Protocol Debugger** and Simulator. Designed for FinTec
 |:---:|:---:|
 | ![Main UI](./assets/main_ui.png) | ![Payload Result](./assets/payload_result.png) |
 
-| Initial State | Transaction Generated |
-|:---:|:---:|
-| ![Initial State](./assets/screenshot_initial.png) | ![Transaction Result](./assets/screenshot_transaction.png) |
-
-| PAN Field Highlighted in Hex Stream | Amount Field Highlighted in Hex Stream |
-|:---:|:---:|
-| ![PAN Hex Highlight](./assets/screenshot_hex_highlight.png) | ![Amount Hex Highlight](./assets/screenshot_amount_highlight.png) |
 
 ## 🚀 Features
 - **✨ Dynamic User Interface**: Modern design with smooth `Framer Motion` animations and a colour-coded hex stream.
